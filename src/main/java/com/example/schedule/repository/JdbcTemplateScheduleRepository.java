@@ -27,6 +27,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+
     // Lv1. 일정 생성(일정 작성하기)
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
@@ -51,11 +52,11 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     // Lv1 전체 일정 조회(등록된 일정 불러오기)
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(String email, String date) {
+    public List<ScheduleResponseDto> findAllSchedules(String email, String date, int page, int size) {
         StringBuilder sql = new StringBuilder("SELECT * FROM schedule WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
-        if (email != null) {    // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
+        if (email != null) {
             sql.append(" AND writer_email = ?");
             params.add(email);
         }
@@ -64,7 +65,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
             params.add(date);
         }
 
-        sql.append(" ORDER BY updated_at DESC");
+        sql.append(" ORDER BY updated_at DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(page * size);
 
         return jdbcTemplate.query(sql.toString(), scheduleRowMapper(), params.toArray());
     }
