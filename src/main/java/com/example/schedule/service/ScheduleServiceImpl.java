@@ -21,6 +21,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
+    // Lv1. 일정 생성(일정 작성하기)
     @Override
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
 
@@ -33,12 +34,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.saveSchedule(schedule);
     }
 
+    // Lv1 전체 일정 조회(등록된 일정 불러오기)
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(String email, String date) {
+    public List<ScheduleResponseDto> findAllSchedules(String email, String date) { 
 
+        // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
+        
         return scheduleRepository.findAllSchedules(email, date);
     }
 
+    // Lv1 선택 일정 조회(선택한 일정 정보 불러오기)
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
 
@@ -54,6 +59,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    // Lv2 선택한 일정 수정
     @Transactional
     @Override
     public ScheduleResponseDto updateSchedule(Long id, String task, String password) {
@@ -85,6 +91,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponseDto(updatedSchedule);
     }
 
+    // Lv2 선택한 일정 삭제
     @Override
     public void deleteSchedule(Long id, String password) {
 
