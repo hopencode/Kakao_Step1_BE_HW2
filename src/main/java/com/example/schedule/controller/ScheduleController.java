@@ -19,6 +19,7 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
+
     // Lv1. 일정 생성(일정 작성하기)
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
@@ -29,11 +30,13 @@ public class ScheduleController {
     // Lv1 전체 일정 조회(등록된 일정 불러오기)
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> getSchedules(
-            @RequestParam(required = false) String email,    // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
-            @RequestParam(required = false) String date
+            @RequestParam(required = false) String email,   // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
+            @RequestParam(required = false) String date,
+            @RequestParam(defaultValue = "0") int page,     // Lv4 페이지네이션 설정
+            @RequestParam(defaultValue = "10") int size
     ) {
 
-        return new ResponseEntity<>(scheduleService.findAllSchedules(email, date), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findAllSchedules(email, date, page, size), HttpStatus.OK);
     }
 
     // Lv1 선택 일정 조회(선택한 일정 정보 불러오기)
