@@ -49,10 +49,11 @@ public class ScheduleController {
     }
 
     // Lv2 선택한 일정 수정
+    // Lv6 입력값 검증
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateScheduleById(
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto dto
+            @Valid @RequestBody ScheduleRequestDto dto
     ) {
 
         return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getTask(), dto.getPassword()), HttpStatus.OK);
