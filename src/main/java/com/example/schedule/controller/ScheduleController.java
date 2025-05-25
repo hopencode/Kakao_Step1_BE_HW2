@@ -21,7 +21,8 @@ public class ScheduleController {
     }
 
 
-    // Lv1. 일정 생성(일정 작성하기)
+    // Lv1 일정 생성(일정 작성하기)
+    // Lv6 입력값 검증
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@Valid @RequestBody ScheduleRequestDto dto) {
 
