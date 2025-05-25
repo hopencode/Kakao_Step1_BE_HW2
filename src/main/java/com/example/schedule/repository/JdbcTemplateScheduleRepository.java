@@ -27,7 +27,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
+    // Lv1. 일정 생성(일정 작성하기)
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
@@ -49,12 +49,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                 schedule.getEmail(), schedule.getCreateDateTime(), schedule.getUpdateDateTime());
     }
 
+    // Lv1 전체 일정 조회(등록된 일정 불러오기)
     @Override
     public List<ScheduleResponseDto> findAllSchedules(String email, String date) {
         StringBuilder sql = new StringBuilder("SELECT * FROM schedule WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
-        if (email != null) {
+        if (email != null) {    // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
             sql.append(" AND writer_email = ?");
             params.add(email);
         }
@@ -68,6 +69,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         return jdbcTemplate.query(sql.toString(), scheduleRowMapper(), params.toArray());
     }
 
+    // Lv1 선택 일정 조회(선택한 일정 정보 불러오기) Optional 버전인데 사용 안했음 - 그냥 다른 방법도 있었다 정도 학습용
     @Override
     public Optional<Schedule> findScheduleById(Long id) {
 
@@ -76,6 +78,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         return result.stream().findAny();
     }
 
+    // Lv1 선택 일정 조회(선택한 일정 정보 불러오기) <- 사용한 방법
     @Override
     public Schedule findScheduleByIdOrElseThrow(Long id) {
 
@@ -84,6 +87,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
     }
 
+    // Lv2 선택한 일정 수정
     @Override
     public int updateSchedule(Long id, String task) {
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -91,6 +95,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         return jdbcTemplate.update("UPDATE schedule SET task = ?, updated_at = ? WHERE id = ?", task, currentDateTime, id);
     }
 
+    // Lv2 선택한 일정 삭제
     @Override
     public int deleteSchedule(Long id) {
 
