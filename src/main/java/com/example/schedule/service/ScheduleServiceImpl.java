@@ -68,6 +68,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
+        // Lv5 예외 발생 처리
         if (!schedule.getPassword().equals(password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password does not match");
         }
@@ -75,6 +76,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         int updatedRow = scheduleRepository.updateSchedule(id, task);
 
+        // Lv5 예외 발생 처리
         if (updatedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
         }
@@ -95,6 +97,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
+        // Lv5 예외 발생 처리
         // 비밀번호 일치 확인
         // 비밀번호가 일치하지 않는 경우 에러
         if (!schedule.getPassword().equals(password)) {
@@ -103,6 +106,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         int deletedRow = scheduleRepository.deleteSchedule(id);
 
+        // Lv5 예외 발생 처리
         // 입력한 id로 조회되는 일정 존재 검사
         // 즉, 입력한 id에 해당하는 일정이 없는 경우 에러
         if (deletedRow == 0) {
