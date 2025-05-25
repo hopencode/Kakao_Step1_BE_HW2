@@ -88,6 +88,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
         List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedule WHERE id = ?", scheduleRowMapperV2(), id);
 
+        // Lv5 예외 발생 처리
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
     }
 
