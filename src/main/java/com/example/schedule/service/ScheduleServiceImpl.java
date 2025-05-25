@@ -36,11 +36,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     // Lv1 전체 일정 조회(등록된 일정 불러오기)
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(String email, String date) { 
+    public List<ScheduleResponseDto> findAllSchedules(String email, String date, int page, int size) {
 
-        // Lv3 연관 관계 설정 (email을 통해 동명이인 구분, schedule.sql에서 작성자 - 일정 연결)
-        
-        return scheduleRepository.findAllSchedules(email, date);
+        return scheduleRepository.findAllSchedules(email, date, page, size);
     }
 
     // Lv1 선택 일정 조회(선택한 일정 정보 불러오기)
