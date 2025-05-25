@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class ScheduleRequestDto {
 
+    // Lv6 입력값 검증
     @NotBlank(message = "할일은 필수 입력 항목입니다.")
     @Size(max = 200, message = "할일은 최대 200자까지 입력 가능합니다.")
     private String task;
