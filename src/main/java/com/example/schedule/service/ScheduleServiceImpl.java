@@ -1,0 +1,103 @@
+package com.example.schedule.service;
+
+import com.example.schedule.dto.ScheduleRequestDto;
+import com.example.schedule.dto.ScheduleResponseDto;
+import com.example.schedule.entity.Schedule;
+import com.example.schedule.repository.ScheduleRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class ScheduleServiceImpl implements ScheduleService {
+
+    private final ScheduleRepository scheduleRepository;
+
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
+        this.scheduleRepository = scheduleRepository;
+    }
+
+    @Override
+    public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        // 요청받은 데이터로 Schedule 객체 생성
+        Schedule schedule = new Schedule(dto.getTask(), dto.getWriter(), dto.getEmail(),
+                                        dto.getPassword(), currentDateTime, currentDateTime);
+
+        return scheduleRepository.saveSchedule(schedule);
+    }
+
+    @Override
+    public List<ScheduleResponseDto> findAllSchedules(String email, String date) {
+
+        return scheduleRepository.findAllSchedules(email, date);
+    }
+
+    @Override
+    public ScheduleResponseDto findScheduleById(Long id) {
+
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        /*
+        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+
+        if (optionalSchedule.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        return new ScheduleResponseDto(optionalSchedule.get());*/
+        return new ScheduleResponseDto(schedule);
+    }
+
+    @Transactional
+    @Override
+    public ScheduleResponseDto updateSchedule(Long id, String task, String password) {
+
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task is required");
+        }
+
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password does not match");
+        }
+
+
+        int updatedRow = scheduleRepository.updateSchedule(id, task);
+
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        Schedule updatedSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        /*Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        if (optionalSchedule.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        return new ScheduleResponseDto(optionalSchedule.get());*/
+        return new ScheduleResponseDto(updatedSchedule);
+    }
+
+    @Override
+    public void deleteSchedule(Long id, String password) {
+
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password does not match");
+        }
+
+        int deletedRow = scheduleRepository.deleteSchedule(id);
+
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+    }
+}
